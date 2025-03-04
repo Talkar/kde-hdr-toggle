@@ -1,19 +1,19 @@
 # kde-hdr-toggle
 
-All credit goes to SysGhost on discuss.kde.org. 
+All credit goes to SysGhost on discuss.kde.org.   
 Link to original thread: https://discuss.kde.org/t/toggle-screen-hdr-on-or-off-automatically-with-this-script/29253
 
 I'm merely hosting it on github for future reference. 
 
->Got a fancy nice HDR monitor?
+>Got a fancy nice HDR monitor?   
 >
->Love that KDE plasma desktop helps utilise HDR?
+>Love that KDE plasma desktop helps utilise HDR?   
 >
->Tired of manually toggling HDR on or off depending on what you’re doing?
+>Tired of manually toggling HDR on or off depending on what you’re doing?   
 >
->Can’t stand editing a bunch of custom launch options or PRE/POST scripts for each game/application each time the screen setup changes? (i.e. laptop docking stations or KVM switches)
+>Can’t stand editing a bunch of custom launch options or PRE/POST scripts for each game/application each time the screen setup changes? (i.e. laptop docking stations or KVM switches)   
 >
->And yeah… having your ICC profile erased each time an HDR title is launched is another annoyance we solve here. (Optional)
+>And yeah… having your ICC profile erased each time an HDR title is launched is another annoyance we solve here. (Optional)   
 >
 >…
 >
@@ -42,15 +42,15 @@ I'm merely hosting it on github for future reference.
 >>
 >>You can also add hdr-toggle as a command in your wrapper scripts. See 'Usage' above.
 >>
->>Tip: Edit /home/sysghost/.bin/hdr-toggle and change the variables at the top to customize the defaults to your setup.
->>See 'kscreen-doctor -o' to list available outputs and their capabilities.
->>
->>To disable this script from toggling anything, a global system variable can be used: 'export DISABLE_HDR_TOGGLING=true'.
->>Unset the variable or set it to false to resume normal operation.
+>>Tip: Edit /home/sysghost/.bin/hdr-toggle and change the variables at the top to customize the defaults to your setup.   
+>>See 'kscreen-doctor -o' to list available outputs and their capabilities.   
+>>   
+>>To disable this script from toggling anything, a global system variable can be used: 'export DISABLE_HDR_TOGGLING=true'.   
+>>Unset the variable or set it to false to resume normal operation.   
 
->'nuf babbling. Here’s the script.
->Name it “hdr-toggle” and make it executable.
->Save it under ~/.bin/, or your preferred user executable path.
->then run ‘hdr-toggle help’ to see how it works.
->It depends on kscreen-doctor to properly operate.
+>'nuf babbling. Here’s the script.   
+>Name it “hdr-toggle” and make it executable.   
+>Save it under ~/.bin/, or your preferred user executable path.   
+>then run ‘hdr-toggle help’ to see how it works.   
+>It depends on kscreen-doctor to properly operate.   
 >
