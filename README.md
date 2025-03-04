@@ -42,7 +42,7 @@ I'm merely hosting it on github for future reference.
 >>
 >>You can also add hdr-toggle as a command in your wrapper scripts. See 'Usage' above.
 >>
->>Tip: Edit /home/sysghost/.bin/hdr-toggle and change the variables at the top to customize the defaults to your setup.   
+>>Tip: Edit ~/.bin/hdr-toggle and change the variables at the top to customize the defaults to your setup.   
 >>See 'kscreen-doctor -o' to list available outputs and their capabilities.   
 >>   
 >>To disable this script from toggling anything, a global system variable can be used: 'export DISABLE_HDR_TOGGLING=true'.   
