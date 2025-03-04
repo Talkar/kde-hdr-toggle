@@ -1,0 +1,79 @@
+#/bin/bash
+DEFAULT_OUTPUT="DP-1"
+DEFAULT_ICC_PROFILE=""
+
+
+
+#################################################################
+# END OF USER VARIABLES. Do not edit variables below this line. #
+#################################################################
+TOGGLE="${1:-toggle}"
+OUTPUT="${2:-$DEFAULT_OUTPUT}"
+
+# Variable juggling to make sure the default ICC profile is only applied to the default output in cases where multiple monitors are present.
+declare ICCPROF_${DEFAULT_OUTPUT//-/_}="${DEFAULT_ICC_PROFILE}"
+ICCPROF=ICCPROF_${OUTPUT//-/_}
+
+# Check on a few things before actually toggling HDR.
+if [[ ! $DESKTOP_SESSION == "plasma" ]] || [[ $DISABLE_HDR_TOGGLING == "true" ]]; then echo "Plasma desktop not active or DISABLE_HDR_TOGGLING has been set to true. Bailing."; exit 0; fi
+OUTPUT_HDR_STATE=$( kscreen-doctor -o | grep "$OUTPUT" -A16 | grep "HDR" | cut -c 21- ) # Read the current HDR state of the chosen output and strip off some ansi escape stuff.
+if [[ $OUTPUT_HDR_STATE == "incapable" ]]; then echo "Output $OUTPUT cannot toggle HDR. Quitting..."; exit 1; fi
+if [[ $OUTPUT_HDR_STATE == "" ]]; then echo "Output $OUTPUT not found. See 'kscreen-doctor -o'. Quitting..."; exit 1; fi
+
+# Due to a bug with kscreen-doctor, we need a delayed screen update. 
+# 'kscreen-doctor' waits indefinitely for the screen to update. Any kind of redraw. It won't continue until that has happened.
+# For this to work something needs to be launched before 'kscreen-doctor', but do something on screen after 'kscreen-doctor' has been launched.
+# 'sleep' and 'notify-send' do this job perfectly fine, while also notifying the user. Hitting two birds with one stone.
+
+function hdr_disable() {
+  echo "${OUTPUT}: Toggling HDR off"
+  if [[ -v 3 ]]; then 
+    ICCPROF_=${3}
+  else
+    ICCPROF_=${!ICCPROF}
+  fi
+  sleep .5 && notify-send "${OUTPUT}: HDR disabled" & # kscreen-doctor wait-bug circumventer.
+  nohup kscreen-doctor output.$OUTPUT.hdr.disable output.$OUTPUT.wcg.disable output.$OUTPUT.iccprofile."${ICCPROF_}" >/dev/null 2>&1 & 
+}
+
+function hdr_enable() {
+  echo "${OUTPUT}: Toggling HDR on"
+  sleep .5 && notify-send "${OUTPUT}: HDR enabled" &  # kscreen-doctor wait-bug circumventer.
+  nohup kscreen-doctor output.$OUTPUT.hdr.enable output.$OUTPUT.wcg.enable >/dev/null 2>&1 & 
+}
+
+case $TOGGLE in
+  toggle)
+    case $OUTPUT_HDR_STATE in
+      enabled)
+        hdr_disable
+        exit 0
+        ;;
+      disabled)
+        hdr_enable
+        exit 0
+        ;;
+      *)
+        echo "OUTPUT_HDR_STATE: $OUTPUT_HDR_STATE - Unexpected value. Bailing... "
+        exit 2
+        ;;
+    esac
+    ;;
+  enable)
+    hdr_enable
+    exit 0
+    ;;
+  disable)
+    hdr_disable
+    exit 0
+    ;;
+  help|h|-h|--help)
+    echo -e "Usage:\n$(basename $0) [enable|disable|toggle|help] [output] [ICC profile]\n\nKDE plasma desktop HDR toggler.\nUtilises kscreen-doctor.\nTo be used with launch wrapper scripts or command lines such as steam, lutris and others.\n\nICC profile is only applied when HDR mode is disabled.\nOmit all options to simply toggle HDR on or off depending on the current status. It will then use the internal defaults. These defaults can be changed by editing this script.\n\nSteam:\nAdd this to the games command line: 'hdr-toggle enable; %command%; hdr-toggle disable'\nThis will enable HDR, launch the game, and once the game quits, disable HDR.\n\nLutris:\nRight-click and choose 'Configure'. Switch to tab 'System options'.\nIn field 'Pre-launch script', add 'hdr-toggle enable'. In the field 'Post-exit script, add 'hdr-toggle disable'\n\nYou can also add $(basename $0) as a command in your wrapper-scripts. See 'Usage' above.\n\nTip: Edit $0 and change the variables at the top to customize the defaults to your setup.\nSee 'kscreen-doctor -o' to list available outputs and their capabilities.\n\nTo disable this script from toggling anything, a global system variable can be used: 'export DISABLE_HDR_TOGGLING=true'.\nUset the variable or set it to false to resume normal operation."
+    ;;
+  *)
+    echo "Unknown command: $1."
+    exit 2
+    ;;
+esac
+
+exit 0
